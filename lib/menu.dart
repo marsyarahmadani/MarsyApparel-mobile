@@ -1,113 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:marsy_apparel/widgets/left_drawer.dart';
+import 'package:marsy_apparel/screens/clothes_form.dart';
+import 'package:marsy_apparel/widgets/clothes_card.dart';
+import 'package:marsy_apparel/screens/view_items.dart';
 
-class MyHomePage extends StatelessWidget {
-    MyHomePage({Key? key}) : super(key: key);
-
-    final List<ShopItem> items = [
-        ShopItem("Lihat Item", Icons.checklist),
-        ShopItem("Tambah Item", Icons.add_box_rounded),
-        ShopItem("Logout", Icons.logout),
-    ];
-
-    @override
-    Widget build(BuildContext context) {
-        return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Marsy Apparel',
-            style: TextStyle(
-              color: Color.fromARGB(255, 56, 56, 56), // Ubah warna teks menjadi abu tua
-            ),
-          ),
-          backgroundColor: Color.fromARGB(235, 240, 231, 222),
-          
-        ),
-        body: SingleChildScrollView(
-          // Widget wrapper yang dapat discroll
-          child: Padding(
-            padding: const EdgeInsets.all(10.0), // Set padding dari halaman
-            child: Column(
-              // Widget untuk menampilkan children secara vertikal
-              children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                  // Widget Text untuk menampilkan tulisan dengan alignment center dan style yang sesuai
-                  child: Text(
-                    'Welcome to Marsy Apparel', // Text yang menandakan toko
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                ),
-                // Grid layout
-                GridView.count(
-                  // Container pada card kita.
-                  primary: true,
-                  padding: const EdgeInsets.all(20),
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  crossAxisCount: 3,
-                  shrinkWrap: true,
-                  children: items.map((ShopItem item) {
-                    // Iterasi untuk setiap item
-                    Color bgColor = Colors.indigo; // Definisikan warna latar belakang sesuai item
-                    
-                    if (item.name == "Lihat Item") {
-                      bgColor = Color.fromARGB(255, 122, 89, 89); // Misalnya, warna latar belakang untuk "Lihat Item" adalah biru
-                    } else if (item.name == "Tambah Item") {
-                      bgColor = Color.fromARGB(255, 175, 124, 76); // Warna latar belakang untuk "Tambah Item" adalah hijau
-                    } else if (item.name == "Logout") {
-                      bgColor = Color.fromARGB(255, 201, 142, 124); // Warna latar belakang untuk "Logout" adalah merah
-                    }
-                    return ShopCard(item, bgColor);
-                  }).toList(),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-}
-
-class ShopItem {
-  final String name;
-  final IconData icon;
-
-  ShopItem(this.name, this.icon);
-}
 
 class ShopCard extends StatelessWidget {
   final ShopItem item;
   final Color bgColor;
 
-  const ShopCard(this.item, this.bgColor, {super.key}) ; // Constructor
+  const ShopCard(this.item,this.bgColor, {super.key}); // Constructor
 
   @override
   Widget build(BuildContext context) {
     return Material(
       color: bgColor,
       child: InkWell(
-        // Area responsive terhadap sentuhan
+        // Area responsif terhadap sentuhan
         onTap: () {
           // Memunculkan SnackBar ketika diklik
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(SnackBar(
-                content: Text("Kamu telah menekan tombol ${item.name}")));
+                content: Text("Kamu telah menekan tombol ${item.name}!")));
+
+          // Navigate ke route yang sesuai (tergantung jenis tombol)
+          if (item.name == "Tambah Item") {
+            // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute yang mencakup ShopFormPage.
+              Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const ClothesFormPage()));
+                
+          }
+          if (item.name == "Lihat Item") {
+            // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute yang mencakup ShopFormPage.
+              Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) =>  ItemsPage(items: items)));
+                
+          }
         },
+        
         child: Container(
           // Container untuk menyimpan Icon dan Text
           padding: const EdgeInsets.all(8),
@@ -126,7 +57,6 @@ class ShopCard extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: const TextStyle(color: Colors.white),
                 ),
-
               ],
             ),
           ),
@@ -135,3 +65,78 @@ class ShopCard extends StatelessWidget {
     );
   }
 }
+class MyHomePage extends StatelessWidget {
+    MyHomePage({Key? key}) : super(key: key);
+
+    final List<ShopItem> items = [
+        ShopItem("Lihat Item", Icons.checklist),
+        ShopItem("Tambah Item", Icons.add_box_rounded),
+        ShopItem("Logout", Icons.logout),
+    ];
+    
+    @override
+    Widget build(BuildContext context) {
+        return Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'Marsy Apparel',
+            style: TextStyle(
+              color: Color.fromARGB(255, 56, 56, 56), // Ubah warna teks menjadi abu tua
+            ),
+          ),
+          backgroundColor: Color.fromARGB(235, 240, 231, 222),
+          
+        ),
+      // Masukkan drawer sebagai parameter nilai drawer dari widget Scaffold
+      drawer: const LeftDrawer(),
+      body: SingleChildScrollView(
+          // Widget wrapper yang dapat discroll
+          child: Padding(
+            padding: const EdgeInsets.all(10.0), // Set padding dari halaman
+            child: Column(
+              // Widget untuk menampilkan children secara vertikal
+              children: <Widget>[
+                const Padding(
+                  padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+                  // Widget Text untuk menampilkan tulisan dengan alignment center dan style yang sesuai
+                    child: Text(
+                      'Welcome to Marsy Apparel', // Text yang menandakan toko
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                // Grid layout
+                GridView.count(
+                  // Container pada card kita.
+                  primary: true,
+                  padding: const EdgeInsets.all(20),
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  crossAxisCount: 3,
+                  shrinkWrap: true,
+                  children: items.map((ShopItem item) {
+                    // Iterasi untuk setiap item
+                    Color bgColor = Colors.indigo; // Definisikan warna latar belakang sesuai item
+                    
+                    if (item.name == "Lihat Item") {
+                      bgColor = const Color.fromARGB(255, 122, 89, 89); // Misalnya, warna latar belakang untuk "Lihat Item" adalah biru
+                    } else if (item.name == "Tambah Item") {
+                      bgColor = const Color.fromARGB(255, 175, 124, 76); // Warna latar belakang untuk "Tambah Item" adalah hijau
+                    } else if (item.name == "Logout") {
+                      bgColor = const Color.fromARGB(255, 201, 142, 124); // Warna latar belakang untuk "Logout" adalah merah
+                    }
+                    return ShopCard(item, bgColor);
+                  }).toList(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  
+}
+
