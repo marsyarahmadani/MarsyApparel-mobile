@@ -104,10 +104,8 @@ import 'package:flutter/material.dart';
 import 'package:marsy_apparel/menu.dart';
 import 'package:marsy_apparel/screens/clothes_form.dart';
 import 'package:marsy_apparel/screens/view_items.dart';
-
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -186,9 +184,8 @@ class LeftDrawer extends StatelessWidget {
     );
   }
 }
-
 ```
- 
+
 2) Kemudian memasukkan menu drawer yang telah dibuat ke `menu.dart` yaitu menambahkan `drawer: const LeftDrawer(),` di line setelah `AppBar`
 
 3)  Selanjutnya saya membuat file `models.dart` untuk menyimpan informasi `model` setiap `Item` dengan menginisiasikan kelas item sebagai berikut:
@@ -197,7 +194,6 @@ class Item {
   String name;
   int amount;
   String description;
-
   Item({
     required this.name,
     required this.amount,
@@ -214,22 +210,17 @@ class Item {
 import 'package:flutter/material.dart';
 import 'package:marsy_apparel/widgets/left_drawer.dart';
 import 'package:marsy_apparel/models/models.dart';
-
 List<Item> items = [];
-
 class ClothesFormPage extends StatefulWidget {
   const ClothesFormPage({super.key});
-
   @override
   State<ClothesFormPage> createState() => _ClothesFormPageState();
 }
-
 class _ClothesFormPageState extends State<ClothesFormPage> {
   final _formKey = GlobalKey<FormState>();
   String _name = "";
   int _amount = 0;
   String _description = "";
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -386,7 +377,6 @@ class _ClothesFormPageState extends State<ClothesFormPage> {
     );
   }
 }
-
 ```
 
 5) Kemudian saya menambahkan file `view_items.dart` yang akan memperlihatkan setiap `Item` yang berhasil ditambahkan dalam bentuk `TileList` dengan isi file seperti berikut ini:
@@ -394,12 +384,9 @@ class _ClothesFormPageState extends State<ClothesFormPage> {
 import 'package:flutter/material.dart';
 import 'package:marsy_apparel/models/models.dart';
 import 'package:marsy_apparel/widgets/left_drawer.dart';
-
 class ItemsPage extends StatelessWidget {
   final List<Item> items;
-
   const ItemsPage({Key? key, required this.items}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -409,7 +396,6 @@ class ItemsPage extends StatelessWidget {
         foregroundColor: const Color.fromARGB(255, 63, 63, 63),
       ),
       drawer: const LeftDrawer(),
-
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -418,7 +404,6 @@ class ItemsPage extends StatelessWidget {
             child: Text(
               'Click to see detail',
               textAlign: TextAlign.center,
-
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.normal,
@@ -473,7 +458,6 @@ class ItemsPage extends StatelessWidget {
     );
   }
 }
-
 ```
 
 6) kemudian agar kedepannya akan lebih mudah saya memindahkan widget `ShopItem` pada `menu.dart` ke `clothes_card.dart`.
@@ -482,180 +466,3 @@ kemudian saya me-refactor file-file dart saya dengan memindahkannya ke folder2 d
     - Folder screen berisi: clothes_form.dart dan view_items.dart
     - Folder widgets berisi: clothes_card.dart dan left_drawer.dart
     - Folder models berisi: models.dart
-=======
-3) Memunculkan Snackbar dengan tulisan:
- * **"Kamu telah menekan tombol Lihat Item"** ketika tombol `Lihat Item` ditekan.
- * **"Kamu telah menekan tombol Tambah Item"** ketika tombol Tambah `Item ditekan`.
- * **"Kamu telah menekan tombol Logout"** ketika tombol `Logout ditekan`.
-
-
-- Membuat struktur project dengan membuat file bernama menu.dart dengan isi sebagai berikut:
-```
-import 'package:flutter/material.dart';
-
-class MyHomePage extends StatelessWidget {
-  MyHomePage({Key? key}) : super(key: key);
-
-    final List<ShopItem> items = [
-        ShopItem("Lihat Item", Icons.checklist),
-        ShopItem("Tambah Item", Icons.add_box_rounded),
-        ShopItem("Logout", Icons.logout),
-    ];
-
-    @override
-    Widget build(BuildContext context) {
-        return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Marsy Apparel',
-            style: TextStyle(
-              color: Color.fromARGB(255, 56, 56, 56), // Ubah warna teks menjadi abu tua
-            ),
-          ),
-          backgroundColor: Color.fromARGB(235, 240, 231, 222),
-          
-        ),
-        body: SingleChildScrollView(
-          // Widget wrapper yang dapat discroll
-          child: Padding(
-            padding: const EdgeInsets.all(10.0), // Set padding dari halaman
-            child: Column(
-              // Widget untuk menampilkan children secara vertikal
-              children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                  // Widget Text untuk menampilkan tulisan dengan alignment center dan style yang sesuai
-                  child: Text(
-                    'Welcome to Marsy Apparel', // Text yang menandakan toko
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                ),
-                // Grid layout
-                GridView.count(
-                  // Container pada card kita.
-                  primary: true,
-                  padding: const EdgeInsets.all(20),
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  crossAxisCount: 3,
-                  shrinkWrap: true,
-                  children: items.map((ShopItem item) {
-                    // Iterasi untuk setiap item
-                    Color bgColor = Colors.indigo; // Definisikan warna latar belakang sesuai item
-                    
-                    if (item.name == "Lihat Item") {
-                      bgColor = Color.fromARGB(255, 122, 89, 89); // Misalnya, warna latar belakang untuk "Lihat Item" adalah biru
-                    } else if (item.name == "Tambah Item") {
-                      bgColor = Color.fromARGB(255, 175, 124, 76); // Warna latar belakang untuk "Tambah Item" adalah hijau
-                    } else if (item.name == "Logout") {
-                      bgColor = Color.fromARGB(255, 201, 142, 124); // Warna latar belakang untuk "Logout" adalah merah
-                    }
-                    return ShopCard(item, bgColor);
-                  }).toList(),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-}
-
-class ShopItem {
-  final String name;
-  final IconData icon;
-
-  ShopItem(this.name, this.icon);
-}
-
-class ShopCard extends StatelessWidget {
-  final ShopItem item;
-  final Color bgColor;
-
-  const ShopCard(this.item, this.bgColor, {super.key}) ; // Constructor
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: bgColor,
-      child: InkWell(
-        // Area responsive terhadap sentuhan
-        onTap: () {
-          // Memunculkan SnackBar ketika diklik
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(
-                content: Text("Kamu telah menekan tombol ${item.name}")));
-        },
-        child: Container(
-          // Container untuk menyimpan Icon dan Text
-          padding: const EdgeInsets.all(8),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  item.icon,
-                  color: Colors.white,
-                  size: 30.0,
-                ),
-                const Padding(padding: EdgeInsets.all(3)),
-                Text(
-                  item.name,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white),
-                ),
-
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-```
-- Dapat dilihat pada `List<ShopItem>` saya membuat 3 icon berfungsi sebagai tombol.
-- Untuk penggantian warna saya membuat if-else statement yang akan membedakan warna tombol sesuai dengan nama icon nya, dan mengeset warna base case nya sebagai warna indigo.
-- Selanjutnya pada file `main.dart` saya mengubahnya sebagai berikut:
-```
-import 'package:flutter/material.dart';
-import 'package:marsy_apparel/menu.dart';
-
-
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-        useMaterial3: true,
-      ),
-      home: MyHomePage(),
-    );
-  }
-}
-
-```
