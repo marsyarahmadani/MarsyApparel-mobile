@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:marsy_apparel/menu.dart';
 import 'package:marsy_apparel/screens/clothes_form.dart';
+// import 'package:marsy_apparel/screens/list_product.dart';
 import 'package:marsy_apparel/screens/view_items.dart';
 
 class LeftDrawer extends StatelessWidget {
@@ -72,13 +73,13 @@ class LeftDrawer extends StatelessWidget {
             title: const Text('Lihat Item'),
             // Bagian redirection ke ShopFormPage
             onTap: () {
-              Navigator.pushReplacement(
+                  // Route menu ke halaman produk
+                  Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => ItemsPage(items: items),
-                  ));
-            },
-          )
+                  MaterialPageRoute(builder: (context) => const ProductPage()),
+                  );
+              },
+          ),
         ],
       ),
     );
