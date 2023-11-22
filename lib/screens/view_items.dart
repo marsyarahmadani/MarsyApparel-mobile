@@ -1,82 +1,91 @@
 import 'package:flutter/material.dart';
-import 'package:marsy_apparel/models/models.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:marsy_apparel/models/product.dart';
 import 'package:marsy_apparel/widgets/left_drawer.dart';
 
-class ItemsPage extends StatelessWidget {
-  final List<Item> items;
+class ProductPage extends StatefulWidget {
+    const ProductPage({Key? key}) : super(key: key);
 
-  const ItemsPage({Key? key, required this.items}) : super(key: key);
+    @override
+    _ProductPageState createState() => _ProductPageState();
+}
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('All your items'),
-        backgroundColor: const Color.fromARGB(235, 240, 231, 222),
-        foregroundColor: const Color.fromARGB(255, 63, 63, 63),
-      ),
-      drawer: const LeftDrawer(),
-
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding:  EdgeInsets.all(8.0),
-            child: Text(
-              'Click to see detail',
-              textAlign: TextAlign.center,
-
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
-          ),
-        Expanded(
-            child: ListView.builder(
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            return Card(
-              elevation: 5,
-              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-              child: ListTile(
-                title: Text(items[index].name),
-                tileColor:  const Color.fromARGB(255, 224, 192, 180),
-                subtitle: Text('Jumlah: ${items[index].amount}'),
-                
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text(items[index].name),
-                        content: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text('Amount: ${items[index].amount}'),
-                            Text('Deskripsi: ${items[index].description}'),
-                          ],
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text('Close'),
-                           ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+class _ProductPageState extends State<ProductPage> {
+Future<List<Item>> fetchProduct() async {
+    // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
+    var url = Uri.parse(
+        'http://127.0.0.1:8000/json/');
+    var response = await http.get(
+        url,
+        headers: {"Content-Type": "application/json"},
     );
-  }
+
+    // melakukan decode response menjadi bentuk json
+    var data = jsonDecode(utf8.decode(response.bodyBytes));
+
+    // melakukan konversi data json menjadi object Item
+    List<Item> list_product = [];
+    for (var d in data) {
+        if (d != null) {
+            list_product.add(Item.fromJson(d));
+        }
+    }
+    return list_product;
+}
+
+@override
+Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+        title: const Text('Item'),
+        ),
+        drawer: const LeftDrawer(),
+        body: FutureBuilder(
+            future: fetchProduct(),
+            builder: (context, AsyncSnapshot snapshot) {
+                if (snapshot.data == null) {
+                    return const Center(child: CircularProgressIndicator());
+                } else {
+                    if (!snapshot.hasData) {
+                    return const Column(
+                        children: [
+                        Text(
+                            "Tidak ada data produk.",
+                            style:
+                                TextStyle(color: Color(0xff59A5D8), fontSize: 20),
+                        ),
+                        SizedBox(height: 8),
+                        ],
+                    );
+                } else {
+                    return ListView.builder(
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (_, index) => Container(
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 12),
+                                padding: const EdgeInsets.all(20.0),
+                                child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                    Text(
+                                    "${snapshot.data![index].fields.name}",
+                                    style: const TextStyle(
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.bold,
+                                    ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text("${snapshot.data![index].fields.amount}"),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                        "${snapshot.data![index].fields.description}")
+                                ],
+                                ),
+                            ));
+                    }
+                }
+            }));
+    }
 }
