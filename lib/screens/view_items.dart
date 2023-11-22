@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:marsy_apparel/models/product.dart';
+import 'package:marsy_apparel/screens/lihat_detail.dart';
 import 'package:marsy_apparel/widgets/left_drawer.dart';
 
 class ProductPage extends StatefulWidget {
@@ -60,11 +61,19 @@ Widget build(BuildContext context) {
                     );
                 } else {
                     return ListView.builder(
-                        itemCount: snapshot.data!.length,
-                        itemBuilder: (_, index) => Container(
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 12),
-                                padding: const EdgeInsets.all(20.0),
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (_, index) => InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LihatDetailPage(item: snapshot.data![index]),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.all(20.0),
                                 child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,13 +86,13 @@ Widget build(BuildContext context) {
                                     ),
                                     ),
                                     const SizedBox(height: 10),
-                                    Text("${snapshot.data![index].fields.amount}"),
+                                    Text("Amount : ${snapshot.data![index].fields.amount}"),
                                     const SizedBox(height: 10),
-                                    Text(
-                                        "${snapshot.data![index].fields.description}")
+                                    // Text(
+                                    //     "${snapshot.data![index].fields.description}")
                                 ],
                                 ),
-                            ));
+                            )));
                     }
                 }
             }));
